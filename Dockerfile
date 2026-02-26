@@ -1,5 +1,9 @@
-# Use Node.js 18 as base image
+# Use Node.js 18 alpine with Python support
 FROM node:18-alpine
+
+# Install Python, make, g++ for native modules
+RUN apk add --no-cache python3 make g++ && \
+    ln -sf python3 /usr/bin/python
 
 # Set working directory
 WORKDIR /app
