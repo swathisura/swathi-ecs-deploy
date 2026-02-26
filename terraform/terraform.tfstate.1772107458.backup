@@ -1,7 +1,7 @@
 {
   "version": 4,
   "terraform_version": "1.12.2",
-  "serial": 87,
+  "serial": 81,
   "lineage": "a9a501f6-abf0-1ce6-0042-510cc08d9025",
   "outputs": {
     "alb_arn": {
@@ -71,7 +71,7 @@
             "assign_ipv6_address_on_creation": false,
             "availability_zone": "us-east-1a",
             "availability_zone_id": "use1-az1",
-            "available_ip_address_count": 4077,
+            "available_ip_address_count": 4081,
             "cidr_block": "172.31.0.0/20",
             "customer_owned_ipv4_pool": "",
             "default_for_az": true,
@@ -427,97 +427,6 @@
           "sensitive_attributes": [],
           "identity_schema_version": 0,
           "private": "bnVsbA=="
-        }
-      ]
-    },
-    {
-      "mode": "managed",
-      "type": "aws_ecs_service",
-      "name": "main",
-      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
-      "instances": [
-        {
-          "schema_version": 1,
-          "attributes": {
-            "alarms": [],
-            "availability_zone_rebalancing": "DISABLED",
-            "capacity_provider_strategy": [],
-            "cluster": "arn:aws:ecs:us-east-1:811738710312:cluster/swathi-cluster",
-            "deployment_circuit_breaker": [],
-            "deployment_controller": [
-              {
-                "type": "CODE_DEPLOY"
-              }
-            ],
-            "deployment_maximum_percent": 200,
-            "deployment_minimum_healthy_percent": 100,
-            "desired_count": 1,
-            "enable_ecs_managed_tags": false,
-            "enable_execute_command": false,
-            "force_delete": null,
-            "force_new_deployment": null,
-            "health_check_grace_period_seconds": 0,
-            "iam_role": "/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
-            "id": "arn:aws:ecs:us-east-1:811738710312:service/swathi-cluster/swathi-service",
-            "launch_type": "FARGATE",
-            "load_balancer": [
-              {
-                "container_name": "swathi-container",
-                "container_port": 1337,
-                "elb_name": "",
-                "target_group_arn": "arn:aws:elasticloadbalancing:us-east-1:811738710312:targetgroup/swathi-tg-blue/dfee8da0e9cd4831"
-              }
-            ],
-            "name": "swathi-service",
-            "network_configuration": [
-              {
-                "assign_public_ip": true,
-                "security_groups": [
-                  "sg-030e63822545c9233"
-                ],
-                "subnets": [
-                  "subnet-00efaeabe6a244f6f",
-                  "subnet-0cc23dc8400d81bf3"
-                ]
-              }
-            ],
-            "ordered_placement_strategy": [],
-            "placement_constraints": [],
-            "platform_version": "1.4.0",
-            "propagate_tags": "NONE",
-            "scheduling_strategy": "REPLICA",
-            "service_connect_configuration": [],
-            "service_registries": [],
-            "tags": {
-              "Name": "swathi-service"
-            },
-            "tags_all": {
-              "Name": "swathi-service"
-            },
-            "task_definition": "arn:aws:ecs:us-east-1:811738710312:task-definition/swathi-task:6",
-            "timeouts": null,
-            "triggers": {},
-            "volume_configuration": [],
-            "vpc_lattice_configurations": [],
-            "wait_for_steady_state": false
-          },
-          "sensitive_attributes": [],
-          "identity_schema_version": 0,
-          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
-          "dependencies": [
-            "aws_ecr_repository.main",
-            "aws_ecs_cluster.main",
-            "aws_ecs_task_definition.main",
-            "aws_lb.main",
-            "aws_lb_listener.main",
-            "aws_lb_target_group.blue",
-            "aws_lb_target_group.green",
-            "aws_security_group.alb_sg",
-            "aws_security_group.ecs_sg",
-            "data.aws_subnet.public_1",
-            "data.aws_subnet.public_2",
-            "data.aws_vpc.main"
-          ]
         }
       ]
     },
