@@ -38,6 +38,21 @@ resource "aws_ecs_task_definition" "main" {
           protocol      = "tcp"
         }
       ]
+
+      environment = [
+        {
+          name  = "NODE_ENV"
+          value = "production"
+        },
+        {
+          name  = "HOST"
+          value = "0.0.0.0"
+        },
+        {
+          name  = "PORT"
+          value = "1337"
+        }
+      ]
     }
   ])
 
@@ -80,7 +95,9 @@ resource "aws_ecs_service" "main" {
   }
 
   depends_on = [
-    aws_lb_listener.main
+    aws_lb_listener.main,
+    aws_lb_target_group.blue,
+    aws_lb_target_group.green
   ]
 
   tags = {
