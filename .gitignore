@@ -1,9 +1,16 @@
-# Terraform files
+# Terraform
 terraform/.terraform/
 terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/*.tfvars
+
+# Strapi
+strapi-app/node_modules/
+strapi-app/.tmp/
+strapi-app/.cache/
+strapi-app/build/
+strapi-app/.env
 
 # Other
 .DS_Store

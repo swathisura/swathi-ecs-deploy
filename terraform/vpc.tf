@@ -6,14 +6,14 @@ data "aws_vpc" "main" {
 }
 
 # ─────────────────────────────────────────
-# Use Existing Default Subnets directly
+# Use Existing Default Subnets
 # ─────────────────────────────────────────
 data "aws_subnet" "public_1" {
-  id = "subnet-0cc23dc8400d81bf3"   # us-east-1a
+  id = "subnet-0cc23dc8400d81bf3"
 }
 
 data "aws_subnet" "public_2" {
-  id = "subnet-00efaeabe6a244f6f"   # us-east-1b
+  id = "subnet-00efaeabe6a244f6f"
 }
 
 # ─────────────────────────────────────────
@@ -48,12 +48,12 @@ resource "aws_security_group" "ecs_sg" {
 # ─────────────────────────────────────────
 resource "aws_security_group" "alb_sg" {
   name        = "${var.app_name}-alb-sg"
-  description = "Allow HTTP traffic to ALB"
+  description = "Allow traffic to ALB"
   vpc_id      = data.aws_vpc.main.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 1337
+    to_port     = 1337
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

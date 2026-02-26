@@ -1,11 +1,23 @@
-# Use official nginx image as base
-FROM nginx:alpine
+# Use Node.js 18 as base image
+FROM node:18-alpine
 
-# Copy app files to nginx html folder
-COPY . /usr/share/nginx/html
+# Set working directory
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+# Copy package files
+COPY strapi-app/package*.json ./
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Install dependencies
+RUN npm install
+
+# Copy all strapi app files
+COPY strapi-app/ .
+
+# Build Strapi
+RUN npm run build
+
+# Expose Strapi port
+EXPOSE 1337
+
+# Start Strapi
+CMD ["npm", "run", "start"]

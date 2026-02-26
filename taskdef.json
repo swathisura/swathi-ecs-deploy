@@ -2,8 +2,8 @@
   "family": "swathi-task",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "256",
-  "memory": "512",
+  "cpu": "1024",
+  "memory": "2048",
   "executionRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
   "taskRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
   "containerDefinitions": [
@@ -13,8 +13,22 @@
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 80,
+          "containerPort": 1337,
           "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "HOST",
+          "value": "0.0.0.0"
+        },
+        {
+          "name": "PORT",
+          "value": "1337"
         }
       ]
     }

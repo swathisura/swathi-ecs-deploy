@@ -12,17 +12,17 @@ variable "app_name" {
 
 variable "container_port" {
   type    = number
-  default = 80
+  default = 1337
 }
 
 variable "task_cpu" {
   type    = string
-  default = "256"
+  default = "1024"
 }
 
 variable "task_memory" {
   type    = string
-  default = "512"
+  default = "2048"
 }
 
 variable "desired_count" {

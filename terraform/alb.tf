@@ -32,7 +32,7 @@ resource "aws_lb_target_group" "blue" {
     timeout             = 5
     interval            = 30
     path                = "/"
-    matcher             = "200"
+    matcher             = "200-399"
   }
 
   tags = {
@@ -57,7 +57,7 @@ resource "aws_lb_target_group" "green" {
     timeout             = 5
     interval            = 30
     path                = "/"
-    matcher             = "200"
+    matcher             = "200-399"
   }
 
   tags = {
@@ -66,11 +66,11 @@ resource "aws_lb_target_group" "green" {
 }
 
 # ─────────────────────────────────────────
-# ALB Listener Port 80 (Production)
+# ALB Listener Port 1337 (Production)
 # ─────────────────────────────────────────
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
-  port              = 80
+  port              = 1337
   protocol          = "HTTP"
 
   default_action {
