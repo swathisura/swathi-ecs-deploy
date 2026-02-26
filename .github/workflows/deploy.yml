@@ -1,0 +1,127 @@
+name: Deploy to ECS via CodeDeploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+  CONTAINER_NAME: swathi-container
+
+jobs:
+  deploy:
+    name: Build, Push & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      # ─────────────────────────────────────────────
+      # STEP 1: Checkout code
+      # ─────────────────────────────────────────────
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────────
+      # STEP 2: Configure AWS credentials
+      # ─────────────────────────────────────────────
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ─────────────────────────────────────────────
+      # STEP 3: Login to Amazon ECR
+      # ─────────────────────────────────────────────
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # ─────────────────────────────────────────────
+      # STEP 4: Build & Push Docker image
+      # ─────────────────────────────────────────────
+      - name: Build, Tag and Push Docker Image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+                     $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      # ─────────────────────────────────────────────
+      # STEP 5: Update ECS Task Definition
+      # ─────────────────────────────────────────────
+      - name: Update ECS Task Definition with New Image
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: taskdef.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+      # ─────────────────────────────────────────────
+      # STEP 6: Deploy via CodeDeploy
+      # ─────────────────────────────────────────────
+      - name: Deploy to ECS via CodeDeploy
+        id: deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+          codedeploy-appspec: appspec.yml
+          codedeploy-application: ${{ secrets.CODEDEPLOY_APP }}
+          codedeploy-deployment-group: ${{ secrets.CODEDEPLOY_GROUP }}
+
+      # ─────────────────────────────────────────────
+      # STEP 7: Monitor & Rollback if Failed
+      # ─────────────────────────────────────────────
+      - name: Monitor Deployment & Rollback if Failed
+        if: always()
+        env:
+          APP: ${{ secrets.CODEDEPLOY_APP }}
+          GROUP: ${{ secrets.CODEDEPLOY_GROUP }}
+        run: |
+          echo "Checking CodeDeploy deployment status..."
+
+          DEPLOYMENT_ID=$(aws deploy list-deployments \
+            --application-name $APP \
+            --deployment-group-name $GROUP \
+            --query 'deployments[0]' \
+            --output text)
+
+          echo "Deployment ID: $DEPLOYMENT_ID"
+
+          for i in {1..20}; do
+            STATUS=$(aws deploy get-deployment \
+              --deployment-id $DEPLOYMENT_ID \
+              --query 'deploymentInfo.status' \
+              --output text)
+
+            echo "[$i/20] Status: $STATUS"
+
+            if [ "$STATUS" = "Succeeded" ]; then
+              echo "✅ Deployment Succeeded!"
+              exit 0
+            elif [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Stopped" ]; then
+              echo "❌ Deployment Failed - Initiating Rollback..."
+              aws deploy stop-deployment \
+                --deployment-id $DEPLOYMENT_ID \
+                --auto-rollback-enabled || true
+              exit 1
+            fi
+            sleep 30
+          done
+
+          echo "⏱️ Monitoring timed out"
+          exit 1

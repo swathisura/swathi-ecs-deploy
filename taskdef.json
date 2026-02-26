@@ -1,0 +1,22 @@
+{
+  "family": "swathi-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
+  "taskRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
+  "containerDefinitions": [
+    {
+      "name": "swathi-container",
+      "image": "811738710312.dkr.ecr.us-east-1.amazonaws.com/swathi-repo:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
