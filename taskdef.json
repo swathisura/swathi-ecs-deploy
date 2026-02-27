@@ -18,19 +18,23 @@
         }
       ],
       "environment": [
-        {
-          "name": "NODE_ENV",
-          "value": "production"
-        },
-        {
-          "name": "HOST",
-          "value": "0.0.0.0"
-        },
-        {
-          "name": "PORT",
-          "value": "1337"
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "HOST", "value": "0.0.0.0" },
+        { "name": "PORT", "value": "1337" },
+        { "name": "APP_KEYS", "value": "myKey1,myKey2,myKey3,myKey4" },
+        { "name": "API_TOKEN_SALT", "value": "myApiTokenSalt123" },
+        { "name": "ADMIN_JWT_SECRET", "value": "myAdminJwtSecret123" },
+        { "name": "JWT_SECRET", "value": "myJwtSecret123" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/swathi-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs",
+          "awslogs-create-group": "true"
         }
-      ]
+      }
     }
   ]
 }
