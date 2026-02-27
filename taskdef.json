@@ -1,40 +1,9 @@
-{
-  "family": "swathi-task",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "2048",
-  "executionRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
-  "taskRoleArn": "arn:aws:iam::811738710312:role/ecs_fargate_taskRole",
-  "containerDefinitions": [
-    {
-      "name": "swathi-container",
-      "image": "811738710312.dkr.ecr.us-east-1.amazonaws.com/swathi-repo:latest",
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 1337,
-          "protocol": "tcp"
-        }
-      ],
-      "environment": [
-        { "name": "NODE_ENV", "value": "production" },
-        { "name": "HOST", "value": "0.0.0.0" },
-        { "name": "PORT", "value": "1337" },
-        { "name": "APP_KEYS", "value": "myKey1,myKey2,myKey3,myKey4" },
-        { "name": "API_TOKEN_SALT", "value": "myApiTokenSalt123" },
-        { "name": "ADMIN_JWT_SECRET", "value": "myAdminJwtSecret123" },
-        { "name": "JWT_SECRET", "value": "myJwtSecret123" }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/swathi-task",
-          "awslogs-region": "us-east-1",
-          "awslogs-stream-prefix": "ecs",
-          "awslogs-create-group": "true"
-        }
-      }
-    }
-  ]
+"logConfiguration": {
+  "logDriver": "awslogs",
+  "options": {
+    "awslogs-group": "/ecs/swathi",
+    "awslogs-region": "us-east-1",
+    "awslogs-stream-prefix": "ecs",
+    "awslogs-create-group": "true"
+  }
 }
